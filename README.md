@@ -6,7 +6,7 @@ Load a 3D model, ask questions in plain language, and see the answer on the part
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-Live demo: _coming soon_
+Live demo: https://geometry-assistant.onrender.com/
 
 ![Geometry Assistant: chat panel, tool-call trace and 3D viewer](docs/screenshot.png)
 
