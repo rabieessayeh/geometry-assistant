@@ -1,0 +1,32 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Models: only the generated samples are versioned (scripts/make_sample_models.py).
+data/*
+!data/samples/
+
+# Evaluation outputs
+eval/results/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

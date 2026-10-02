@@ -1,0 +1,86 @@
+# Evaluation set: questions with the tool call a correct agent should make.
+#
+# The questions target the sample parts of data/samples (bridge, enclosure,
+# l_bracket). `selection` is the viewer state sent with the question: the
+# active model, the picked points and the current view. `expected.args` lists
+# the arguments that must match; arguments left to their default are not
+# listed. `tool: null` marks a question no tool can answer, where the agent
+# must not call any tool (model_info is always allowed).
+
+- id: volume-and-bounding-box
+  question: "What is the volume and bounding box?"
+  selection: {model: l_bracket}
+  expected:
+    tool: model_info
+    args: {model: l_bracket}
+
+- id: support-faces
+  question: "Highlight the faces that would need support for 3D printing"
+  selection: {model: bridge}
+  expected:
+    tool: overhang_analysis
+    args: {model: bridge}
+
+- id: support-faces-custom-angle
+  # A number in the question must end up in the right argument.
+  question: "My printer handles overhangs up to 60 degrees. Which faces still need support?"
+  selection: {model: l_bracket}
+  expected:
+    tool: overhang_analysis
+    args: {model: l_bracket, threshold_deg: 60}
+
+- id: slice-z
+  question: "Slice the part at z = 10 mm"
+  selection: {model: bridge}
+  expected:
+    tool: slice_at
+    args: {model: bridge, axis: z, value_mm: 10}
+
+- id: slice-other-model-cm
+  # Names a model that is not the active one, and needs a unit conversion (cm -> mm).
+  question: "Show me the cross-section of the enclosure at x = 2.5 cm"
+  selection: {model: bridge}
+  expected:
+    tool: slice_at
+    args: {model: enclosure, axis: x, value_mm: 25}
+
+- id: distance-between-picked-points
+  # The coordinates come from the selection context, not from the question.
+  question: "Measure the distance between the two points I clicked"
+  selection:
+    model: bridge
+    points: [[0, 0, 25], [50, 20, 25]]
+  expected:
+    tool: measure_distance
+    args: {model: bridge, point_a: [0, 0, 25], point_b: [50, 20, 25]}
+
+- id: distance-with-one-point
+  # Only one point was picked: the agent must ask for a second one, not invent it.
+  question: "Measure the distance between the two points I clicked"
+  selection:
+    model: bridge
+    points: [[0, 0, 25]]
+  expected:
+    tool: null
+
+- id: bottom-faces-fr
+  # Same kind of request in French.
+  question: "Quelles sont les faces orientées vers le bas ?"
+  selection: {model: enclosure}
+  expected:
+    tool: highlight_by_normal
+    args: {model: enclosure, direction: "-z"}
+
+- id: top-view
+  question: "Show me the top view"
+  selection: {model: enclosure, view: iso}
+  expected:
+    tool: set_view
+    args: {view: top}
+
+- id: out-of-scope
+  # No tool knows the material: the agent must say so, not invent a mass.
+  question: "What material is this part made of, and how much does it weigh?"
+  selection: {model: l_bracket}
+  expected:
+    tool: null

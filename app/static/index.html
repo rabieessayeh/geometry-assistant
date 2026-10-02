@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Geometry Assistant</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1l6 3.5v7L8 15l-6-3.5v-7z' fill='%232456d6'/%3E%3Cpath d='M8 8v7M8 8l6-3.5M8 8L2 4.5' stroke='%23fff' fill='none'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+    <!-- No build step: the libraries are ES modules loaded from a CDN, pinned to exact versions. -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/",
+          "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.9.15/build/index.module.js",
+          "marked": "https://cdn.jsdelivr.net/npm/marked@18.0.14/lib/marked.esm.js",
+          "dompurify": "https://cdn.jsdelivr.net/npm/dompurify@3.4.16/dist/purify.es.mjs"
+        }
+      }
+    </script>
+    <script type="module" src="/static/js/main.js"></script>
+  </head>
+  <body>
+    <aside class="chat">
+      <header class="chat-header">
+        <h1>Geometry Assistant</h1>
+        <p>Ask about a 3D model. The numbers come from geometry tools, not from the language model.</p>
+        <div class="model-bar">
+          <label for="model-select">Model</label>
+          <select id="model-select"></select>
+          <button id="upload-button" type="button" title="Upload an STL or OBJ file (10 MB max)">
+            Upload
+          </button>
+          <input id="upload-input" type="file" accept=".stl,.obj" hidden />
+        </div>
+        <p id="status" class="status" role="status" hidden></p>
+      </header>
+
+      <div id="messages" class="messages" aria-live="polite"></div>
+
+      <div id="suggestions" class="suggestions"></div>
+
+      <form id="ask-form" class="ask-form">
+        <textarea
+          id="question"
+          rows="2"
+          maxlength="1000"
+          placeholder="Ask about the model…"
+          aria-label="Question"
+          required
+        ></textarea>
+        <button id="send-button" type="submit">Ask</button>
+      </form>
+    </aside>
+
+    <main class="viewport">
+      <div id="viewer" class="viewer"></div>
+
+      <div class="toolbar" role="toolbar" aria-label="Camera views">
+        <button type="button" data-view="top">Top</button>
+        <button type="button" data-view="front">Front</button>
+        <button type="button" data-view="side">Side</button>
+        <button type="button" data-view="iso">Iso</button>
+        <span class="separator"></span>
+        <button type="button" id="clear-overlays">Clear overlays</button>
+      </div>
+
+      <p class="help">Drag to orbit · right-drag to pan · wheel to zoom · grid squares are <span id="grid-cell">10</span> mm · Z is up</p>
+    </main>
+
+    <aside class="side-panel" aria-label="Model and selection">
+      <h2>Model</h2>
+      <dl id="model-facts" class="facts"></dl>
+
+      <h2>
+        Picked points
+        <button type="button" id="clear-points" class="link" hidden>Clear</button>
+      </h2>
+      <ol id="points" class="points"></ol>
+      <p id="points-hint" class="hint">Click the model to pick points. They are sent with your question.</p>
+
+      <h2>View</h2>
+      <p id="current-view" class="value">iso</p>
+
+      <div id="legend" class="legend" hidden></div>
+    </aside>
+  </body>
+</html>
